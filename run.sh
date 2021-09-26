@@ -9,13 +9,11 @@ unset LD_LIBRARY_PATH
 source $XILINX_VITIS/data/emulation/qemu/unified_qemu_v5_0/environment-setup-aarch64-xilinx-linux
 
 export PLATFORM_REPO_PATHS=/usr/tools/xilinx/platforms/xilinx_zcu102_base_202020_1
-#export ROOTFS=<path to the ZYNQMP common image directory, containing rootfs>
-#export SYSROOT=$ROOTFS/sysroots/aarch64-xilinx-linux
 
-rm -rf work *.log _x sd_card *bin *BIN
+rm -rf work *.log _x sd_card *bin *BIN *.dat
 mkdir work
 
-v++ -c src/vadd.c -t hw --kernel vadd -f $PLATFORM_REPO_PATHS/xilinx_zcu102_base_202020_1.xpfm -o work/vadd.xo --config run.cfg
-v++ -l -t hw -o work/vadd.xclbin -f $PLATFORM_REPO_PATHS/xilinx_zcu102_base_202020_1.xpfm  work/vadd.xo --config run.cfg
+v++ -c -O3 src/vadd.c -t hw --kernel vadd -f $PLATFORM_REPO_PATHS/xilinx_zcu102_base_202020_1.xpfm -o work/vadd.xo --no_ip_cache --config run.cfg
+v++ -l -O3 -s -t hw -o work/vadd.xclbin -f $PLATFORM_REPO_PATHS/xilinx_zcu102_base_202020_1.xpfm  work/vadd.xo --no_ip_cache --config run.cfg
 v++ -p -t hw -f $PLATFORM_REPO_PATHS/xilinx_zcu102_base_202020_1.xpfm work/vadd.xclbin --config run.cfg
 
